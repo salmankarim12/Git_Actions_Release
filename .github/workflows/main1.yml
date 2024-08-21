@@ -22,6 +22,11 @@ jobs:
           pip install bump2version
           pip install changelog-generator
       
+      - name: Set up Git
+        run: |
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+      
       - name: Bump version and prepare release
         run: |
           bump2version patch  # Automatically increments the patch version
@@ -29,8 +34,6 @@ jobs:
       
       - name: Commit and push changes
         run: |
-          git config --global user.email "you@example.com"
-          git config --global user.name "Your Name"
           git add .
           git commit -m "Release version $(bump2version --dry-run --list | grep new_version | cut -d'=' -f2)"
           git push
