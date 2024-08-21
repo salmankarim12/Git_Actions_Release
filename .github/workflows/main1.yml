@@ -12,13 +12,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.x" # Adjust according to your needs
-
-      - name: Install Git
-        run: sudo apt-get install git
+      - name: Set up Git user
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
 
       - name: Create a new tag and release
         env:
@@ -26,13 +23,6 @@ jobs:
         run: |
           # Get the latest commit hash
           COMMIT_HASH=$(git rev-parse HEAD)
-
+          
           # Create a tag
-          TAG_NAME="v$(date +'%Y.%m.%d')-${COMMIT_HASH:0:7}"
-          git tag -a $TAG_NAME -m "Release version $TAG_NAME"
-
-          # Push the tag
-          git push origin $TAG_NAME
-
-          # Create a release using the GitHub CLI
-          gh release create $TAG_NAME --title "Release $TAG_NAME" --notes "Release notes for $TAG_NAME" --target $COMMIT_HASH
+          TAG_NAM
