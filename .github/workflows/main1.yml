@@ -25,4 +25,17 @@ jobs:
           COMMIT_HASH=$(git rev-parse HEAD)
           
           # Create a tag
-          TAG_NAM
+          TAG_NAME="v$(date +'%Y.%m.%d')-${COMMIT_HASH:0:7}"
+          echo "Tag Name: $TAG_NAME"  # Debugging line to check the tag name
+          git tag -a "$TAG_NAME" -m "Release version $TAG_NAME"
+          
+          # Push the tag
+          git push origin "$TAG_NAME"
+
+          # Install GitHub CLI if not available
+          if ! command -v gh &> /dev/null; then
+            sudo apt-get install gh
+          fi
+          
+          # Create a release using the GitHub CLI
+          gh release create "$TAG_NAME" --title "Release $TAG_NAME" --notes "Release notes for $TAG_NAME" --target "$COMMIT_HASH"
