@@ -12,10 +12,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Create Release
-        uses: actions/create-release@v1
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'  # or any version you need
+      
+      - name: Install Python dependencies
+        run: |
+          pip install bump2version
+          pip install changelog-generator
+      
+      - name: Prepare release
+        run: |
+          bump2version patch  # or 'minor', 'major', depending on your needs
+          changelog-generator > CHANGELOG.md
+      
+      - name: Commit and push changes
+        run: |
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+          git add .
+          git commit -m "Release version $(bump2version --dry-run --list | grep new_version | cut -d'=' -f2)"
+          git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag: ${{github.run_number}}
-          release_name: Python Package ${{github.run_number}}
