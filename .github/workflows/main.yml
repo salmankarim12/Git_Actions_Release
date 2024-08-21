@@ -1,0 +1,25 @@
+name: Create Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create Release
+        uses: gh-action-create-release@v1
+        with:
+          tag_name: v${{ github.run_number }}-${{ github.sha }}
+          release_name: Release ${{ github.run_number }}
+          body: |
+            Automated release triggered by push to main branch.
+            Commit SHA: ${{ github.sha }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
