@@ -1,45 +1,30 @@
-name: Create Release
+name: Append to pyproject.toml
 
 on:
   push:
     branches:
-      - main
+      - main  # Or the branch you want to trigger this action
 
 jobs:
-  create-release:
-    runs-on: ubuntu-latest
+  append_file:
+    runs-on: ubuntu-latest  # You can use a different runner if needed
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Git user
-        run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"
+    - name: Append to pyproject.toml
+      run: |
+        echo '[tool.poetry]' >> pyproject.toml
+        echo 'name = "Testing-project"' >> pyproject.toml
+        echo 'version = "0.4.0"' >> pyproject.toml
+        echo 'description = "A short description of the project"' >> pyproject.toml
+        echo 'authors = ["salman <salmankarim64@gmail.com>"]' >> pyproject.toml
 
-      - name: Set up Git remote URL with token
-        run: |
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-
-      - name: Create a new tag and release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Get the latest commit hash
-          COMMIT_HASH=$(git rev-parse HEAD)
-          
-          # Create a tag
-          TAG_NAME="v$(date +'%Y.%m.%d')-${COMMIT_HASH:0:7}"
-          echo "Tag Name: $TAG_NAME"  # Debugging line to check the tag name
-          git tag -a "$TAG_NAME" -m "Release version $TAG_NAME"
-          
-          # Push the tag
-          git push origin "$TAG_NAME"
-
-          # Install GitHub CLI if not available
-          if ! command -v gh &> /dev/null; then
-            sudo apt-get install gh
-          fi
-          
-          # Create a release using the GitHub CLI
-          gh release create "$TAG_NAME" --title "Release $TAG_NAME" --notes "Release notes for $TAG_NAME" --target "$COMMIT_HASH"
+    - name: Commit changes
+      run: |
+        git config --global user.name 'GitHub Actions'
+        git config --global user.email 'actions@github.com'
+        git add pyproject.toml
+        git commit -m 'Append to pyproject.toml'
+        git push
