@@ -26,6 +26,10 @@ jobs:
         run: |
           git config --global user.email "you@example.com"
           git config --global user.name "Your Name"
+
+      - name: Generate changelog
+        run: |
+          python -m changelog > CHANGELOG.md
       
       - name: Bump version and prepare release
         run: |
