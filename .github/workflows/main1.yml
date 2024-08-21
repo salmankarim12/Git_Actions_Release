@@ -11,16 +11,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
+      
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'  # or any version you need
-      
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'  # Specify the latest Node.js version
       
       - name: Install Python dependencies
         run: |
@@ -41,3 +36,4 @@ jobs:
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
