@@ -1,42 +1,31 @@
-name: Create Release12
-
-on:
-  push:
-    branches:
-      - main
 jobs:
   release:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'  # or any version you need
-      
+          python-version: '3.9'
+
       - name: Install Python dependencies
         run: |
           pip install bump2version
-          pip install changelog-generator
-      
+
       - name: Set up Git
         run: |
           git config --global user.email "you@example.com"
           git config --global user.name "Your Name"
 
-      - name: Generate changelog
-        run: |
-          python -m changelog > CHANGELOG.md
-      
       - name: Bump version and prepare release
         run: |
           bump2version patch  # Automatically increments the patch version
-          changelog-generator > CHANGELOG.md
+          echo "## Changelog" > CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "- Bumped version to $(bump2version --dry-run --list | grep new_version | cut -d'=' -f2)" >> CHANGELOG.md
 
-      
       - name: Commit and push changes
         run: |
           git add .
@@ -44,4 +33,3 @@ jobs:
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
