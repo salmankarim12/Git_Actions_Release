@@ -21,13 +21,41 @@ jobs:
         echo "Current version: $VERSION"
         echo "VERSION=$VERSION" >> $GITHUB_ENV
 
+    - name: Determine increment type
+      id: determine_increment
+      run: |
+        # Get the most recent commit message
+        COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+        
+        # Default increment type
+        INCREMENT_TYPE="patch"
+
+        # Determine increment type based on the commit message
+        if echo "$COMMIT_MESSAGE" | grep -q "\[major\]"; then
+          INCREMENT_TYPE="major"
+        elif echo "$COMMIT_MESSAGE" | grep -q "\[minor\]"; then
+          INCREMENT_TYPE="minor"
+        else
+          INCREMENT_TYPE="patch"
+        fi
+
+        echo "Increment type: $INCREMENT_TYPE"
+        echo "INCREMENT_TYPE=$INCREMENT_TYPE" >> $GITHUB_ENV
+
     - name: Increment version
       id: increment_version
       run: |
-        # Increment the patch version
+        # Increment the version based on the increment type
         IFS='.' read -r major minor patch <<< "${VERSION}"
-        new_patch=$((patch + 1))
-        new_version="${major}.${minor}.${new_patch}"
+        
+        if [ "$INCREMENT_TYPE" = "major" ]; then
+          new_version="$((major + 1)).0.0"
+        elif [ "$INCREMENT_TYPE" = "minor" ]; then
+          new_version="${major}.$((minor + 1)).0"
+        else
+          new_version="${major}.${minor}.$((patch + 1))"
+        fi
+
         echo "New version: $new_version"
         echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
 
