@@ -1,3 +1,10 @@
+name: Release Workflow
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -19,14 +26,11 @@ jobs:
           git config --global user.email "you@example.com"
           git config --global user.name "Your Name"
 
-      - name: Bump version and prepare release
+      - name: Bump version
         run: |
-          bump2version patch  # Automatically increments the patch version
-          echo "## Changelog" > CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          echo "- Bumped version to $(bump2version --dry-run --list | grep new_version | cut -d'=' -f2)" >> CHANGELOG.md
+          bump2version patch
 
-      - name: Commit and push changes
+      - name: Commit changes
         run: |
           git add .
           git commit -m "Release version $(bump2version --dry-run --list | grep new_version | cut -d'=' -f2)"
