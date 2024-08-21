@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'  # or any version you need
-
+      
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -27,9 +27,9 @@ jobs:
           pip install bump2version
           pip install changelog-generator
       
-      - name: Prepare release
+      - name: Bump version and prepare release
         run: |
-          bump2version patch  # or 'minor', 'major', depending on your needs
+          bump2version patch  # Automatically increments the patch version
           changelog-generator > CHANGELOG.md
       
       - name: Commit and push changes
