@@ -31,11 +31,11 @@ jobs:
         INCREMENT_TYPE="patch"
 
         # Determine increment type based on the commit message
-        if echo "$COMMIT_MESSAGE" | grep -q "\[major\]"; then
+        if echo "$COMMIT_MESSAGE" | grep -q "^breaking:"; then
           INCREMENT_TYPE="major"
-        elif echo "$COMMIT_MESSAGE" | grep -q "\[minor\]"; then
+        elif echo "$COMMIT_MESSAGE" | grep -q "^feat:"; then
           INCREMENT_TYPE="minor"
-        else
+        elif echo "$COMMIT_MESSAGE" | grep -q "^fix:"; then
           INCREMENT_TYPE="patch"
         fi
 
