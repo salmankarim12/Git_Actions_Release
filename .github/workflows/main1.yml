@@ -30,7 +30,6 @@ jobs:
       - name: Bump version and prepare release
         run: |
           bump2version patch  # Automatically increments the patch version
-          changelog-generator > CHANGELOG.md
       
       - name: Commit and push changes
         run: |
